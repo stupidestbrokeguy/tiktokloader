@@ -1,0 +1,30 @@
+name: Post to TikTok
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 6:00 UTC = 10:00 AM Dubai time
+  workflow_dispatch:  # Lets you run it manually from GitHub UI
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install simple-tiktok-uploader
+          playwright install chromium --with-deps
+
+      - name: Upload video to TikTok
+        run: |
+          # Replace with your actual video file path
+          tiktok-upload upload ./test_video.mp4 --caption "Check out this invitation! #invitation #stupidorange"
+        env:
+          TIKTOK_SESSION: ${{ secrets.TIKTOK_SESSION }}
